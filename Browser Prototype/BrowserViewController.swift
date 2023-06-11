@@ -43,17 +43,20 @@ extension BrowserViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         let link = webView.url?.absoluteString ?? ""
         
-        if history.last != link {
-            history.append(link)
-        }
+        appendNewLinkToHistory(link)
+        
         if navigationAction.navigationType == .linkActivated {
             let link = navigationAction.request.mainDocumentURL?.absoluteString ?? ""
-            if history.last != link {
-                history.append(link)
-            }
+            appendNewLinkToHistory(link)
         }
         
         decisionHandler(.allow)
+    }
+    
+    private func appendNewLinkToHistory(_ link: String) {
+        if history.last != link {
+            history.append(link)
+        }
     }
 }
 
