@@ -9,7 +9,12 @@ import UIKit
 
 class HistoryViewController: UITableViewController {
     
-    var history = [String]()
+    var delegate: HistoryURLSelectionDelegate!
+    private var history = [String]()
+    
+    func setupViewControllerWith(_ history: [String]) {
+        self.history = history.reversed()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,5 +33,8 @@ class HistoryViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        guard let url = URL(string: history[indexPath.row]) else { return }
+        delegate.openURLFromHistoryVC(url)
+        dismiss(animated: true)
     }
 }

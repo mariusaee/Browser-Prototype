@@ -8,12 +8,16 @@
 import UIKit
 import WebKit
 
-final class BrowserViewController: UIViewController {
+protocol HistoryURLSelectionDelegate {
+    func openURLFromHistoryVC(_ url: URL)
+}
 
+final class BrowserViewController: UIViewController {
+    
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var webView: WKWebView!
     
-    var history = [String]()
+    private var history = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +27,8 @@ final class BrowserViewController: UIViewController {
     
     @IBAction func historyButtonTapped() {
         let historyVC = HistoryViewController()
-        historyVC.history = history
+        historyVC.setupViewControllerWith(history)
+        historyVC.delegate = self
         navigationController?.present(historyVC, animated: true)
     }
 }
@@ -43,7 +48,9 @@ extension BrowserViewController: WKNavigationDelegate {
         }
         if navigationAction.navigationType == .linkActivated {
             let link = navigationAction.request.mainDocumentURL?.absoluteString ?? ""
-            history.append(link)
+            if history.last != link {
+                history.append(link)
+            }
         }
         
         decisionHandler(.allow)
@@ -78,5 +85,12 @@ extension BrowserViewController: UITextFieldDelegate {
     private func searchText(_ text: String) {
         guard let searchUrl = URL(string: "https://www.google.com/search?q=\(text)".encodeUrl) else { return }
         openURL(searchUrl)
+    }
+}
+
+extension BrowserViewController: HistoryURLSelectionDelegate {
+    func openURLFromHistoryVC(_ url: URL) {
+        openURL(url)
+        textField.text = url.absoluteString
     }
 }
