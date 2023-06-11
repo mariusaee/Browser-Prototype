@@ -19,10 +19,13 @@ final class BrowserViewController: UIViewController {
     
     private var history = [String]()
     
+    private let defaults = UserDefaults.standard
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureWebView()
         configureTextField()
+        history = defaults.stringArray(forKey: "history") ?? []
     }
     
     @IBAction func historyButtonTapped() {
@@ -56,6 +59,7 @@ extension BrowserViewController: WKNavigationDelegate {
     private func appendNewLinkToHistory(_ link: String) {
         if history.last != link {
             history.append(link)
+            defaults.set(history, forKey: "history")
         }
     }
 }
