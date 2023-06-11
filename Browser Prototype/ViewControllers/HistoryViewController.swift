@@ -14,11 +14,7 @@ class HistoryViewController: UITableViewController {
     
     func setupViewControllerWith(_ history: [String]) {
         self.history = history.reversed()
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.TableViewCells.historyCell)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -26,7 +22,7 @@ class HistoryViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TableViewCells.historyCell, for: indexPath)
         cell.textLabel?.text = history[indexPath.row]
         return cell
     }

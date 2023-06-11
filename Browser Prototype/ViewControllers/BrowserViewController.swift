@@ -19,13 +19,13 @@ final class BrowserViewController: UIViewController {
     
     private var history = [String]()
     
-    private let defaults = UserDefaults.standard
+    private let dataSource = DataService.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureWebView()
         configureTextField()
-        history = defaults.stringArray(forKey: "history") ?? []
+        history = dataSource.loadHistory()
     }
     
     @IBAction func historyButtonTapped() {
@@ -59,7 +59,7 @@ extension BrowserViewController: WKNavigationDelegate {
     private func appendNewLinkToHistory(_ link: String) {
         if history.last != link {
             history.append(link)
-            defaults.set(history, forKey: "history")
+            dataSource.saveHistory(history)
         }
     }
 }
@@ -67,7 +67,7 @@ extension BrowserViewController: WKNavigationDelegate {
 extension BrowserViewController: UITextFieldDelegate {
     private func configureTextField() {
         textField.delegate = self
-        textField.placeholder = "Enter website"
+        textField.placeholder = Constants.Placeholders.browserTextField
         textField.keyboardType = .URL
         textField.autocorrectionType = .no
     }
@@ -90,7 +90,7 @@ extension BrowserViewController: UITextFieldDelegate {
     }
     
     private func searchText(_ text: String) {
-        guard let searchUrl = URL(string: "https://www.google.com/search?q=\(text)".encodeUrl) else { return }
+        guard let searchUrl = URL(string: (Constants.SearchQueries.google + text).encodeUrl) else { return }
         openURL(searchUrl)
     }
 }
