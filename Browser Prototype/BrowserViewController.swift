@@ -13,6 +13,8 @@ final class BrowserViewController: UIViewController {
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var webView: WKWebView!
     
+    var history = [String]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureWebView()
@@ -20,9 +22,8 @@ final class BrowserViewController: UIViewController {
     }
     
     @IBAction func historyButtonTapped() {
-        // open HistoryVC
-        print(webView.backForwardList)
         let historyVC = HistoryViewController()
+        historyVC.history = history
         navigationController?.present(historyVC, animated: true)
     }
 }
@@ -32,6 +33,20 @@ extension BrowserViewController: WKNavigationDelegate {
         webView.navigationDelegate = self
         webView.backgroundColor = .white
         webView.allowsBackForwardNavigationGestures = true
+    }
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        let link = webView.url?.absoluteString ?? ""
+        
+        if history.last != link {
+            history.append(link)
+        }
+        if navigationAction.navigationType == .linkActivated {
+            let link = navigationAction.request.mainDocumentURL?.absoluteString ?? ""
+            history.append(link)
+        }
+        
+        decisionHandler(.allow)
     }
 }
 
@@ -65,6 +80,3 @@ extension BrowserViewController: UITextFieldDelegate {
         openURL(searchUrl)
     }
 }
-
-
-
