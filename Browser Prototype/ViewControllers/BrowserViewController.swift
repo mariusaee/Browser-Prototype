@@ -18,7 +18,6 @@ final class BrowserViewController: UIViewController {
     @IBOutlet weak var webView: WKWebView!
     
     private var history = [String]()
-    
     private let dataSource = DataService.shared
     
     override func viewDidLoad() {
